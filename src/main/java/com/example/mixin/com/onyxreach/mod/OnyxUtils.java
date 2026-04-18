@@ -1,0 +1,72 @@
+package com.onyxreach.mod;
+
+import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.network.ClientPlayerEntity;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
+import net.minecraft.util.Hand;
+import java.util.Comparator;
+
+public class OnyxUtils implements ClientModInitializer {
+
+    @Override
+    public void onInitializeClient() {
+        ClientTickEvents.END_CLIENT_TICK.register(client -> {
+            ClientPlayerEntity player = client.player;
+            if (player == null || client.world == null) return;
+
+            // 1. AUTO WIND CHARGE JUMP
+            // Triggers if you are holding Jump, are in the air, and not on the ground
+            if (client.options.jumpKey.isPressed() && !player.isOnGround()) {
+                // Scan the 9 hotbar slots for Wind Charges
+                for (int i = 0; i < 9; i++) {
+                    ItemStack stack = player.getInventory().getStack(i);
+                    if (stack.isOf(Items.WIND_CHARGE)) {
+                        player.getInventory().selectedSlot = i; // Switch to Wind Charge
+                        player.setPitch(90.0f); // Instant look at feet
+                        client.interactionManager.interactItem(player, Hand.MAIN_HAND); // Use it
+                        break; 
+                    }
+                }
+            }
+
+            // 2. INSTANT AERIAL MACE
+            // Triggers if flying with Elytra + holding Mace + Left Click
+            if (player.isFallFlying() && player.getMainHandStack().isOf(Items.MACE)) {
+                ItemStack chest = player.getEquippedStack(EquipmentSlot.CHEST);
+                
+                // Only works if you have a Chestplate equipped (as requested)
+                if (chest.isOf(Items.NETHERITE_CHESTPLATE) || chest.isOf(Items.DIAMOND_CHESTPLATE)) {
+                    if (client.options.attackKey.isPressed()) {
+                        // Search for the nearest player in a 6-block radius
+                        Entity target = client.world.getEntitiesByClass(PlayerEntity.class, 
+                            player.getBoundingBox().expand(6.0), e -> e != player && e.isAlive())
+                            .stream().min(Comparator.comparingDouble(player::squaredDistanceTo)).orElse(null);
+
+                        if (target != null) {
+                            instantLook(player, target); // Instant snap
+                            client.interactionManager.attackEntity(player, target); // Hit
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    // Mathematical helper for the instant snap rotation
+    private void instantLook(ClientPlayerEntity player, Entity target) {
+        double dx = target.getX() - player.getX();
+        double dy = (target.getY() + target.getEyeHeight() * 0.8) - (player.getY() + player.getEyeHeight());
+        double dz = target.getZ() - player.getZ();
+        float yaw = (float) Math.toDegrees(Math.atan2(dz, dx)) - 90.0f;
+        float pitch = (float) -Math.toDegrees(Math.atan2(dy, Math.sqrt(dx * dx + dz * dz)));
+        player.setYaw(yaw);
+        player.setPitch(pitch);
+    }
+}
+
