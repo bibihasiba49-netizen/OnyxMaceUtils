@@ -1,4 +1,4 @@
-package com.example.mixin;
+package com.onyxreach.mod;
 
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
@@ -18,7 +18,6 @@ public class OnyxUtils implements ClientModInitializer {
             ClientPlayerEntity player = client.player;
             if (player == null || client.world == null) return;
 
-            // 1. AUTO WIND CHARGE JUMP
             if (client.options.jumpKey.isPressed() && !player.isOnGround()) {
                 for (int i = 0; i < 9; i++) {
                     ItemStack stack = player.getInventory().getStack(i);
@@ -31,7 +30,6 @@ public class OnyxUtils implements ClientModInitializer {
                 }
             }
 
-            // 2. INSTANT AERIAL MACE
             if (player.isFallFlying() && player.getMainHandStack().isOf(Items.MACE)) {
                 ItemStack chest = player.getEquippedStack(EquipmentSlot.CHEST);
                 if (chest.isOf(Items.NETHERITE_CHESTPLATE) || chest.isOf(Items.DIAMOND_CHESTPLATE)) {
@@ -59,3 +57,4 @@ public class OnyxUtils implements ClientModInitializer {
         player.setPitch(pitch);
     }
 }
+
