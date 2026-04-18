@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "onyxmaceutils",
-  "version": "${version}",
+  "version": "1.0.0",
   "name": "Onyx Mace Utils",
   "description": "Auto Windcharge Jump and Instant Aerial Mace",
   "authors": [
@@ -15,7 +15,7 @@
   "environment": "*",
   "entrypoints": {
     "client": [
-      "com.onyxreach.mod.OnyxUtils"
+      "com.example.mixin.OnyxUtils"
     ]
   },
   "depends": {
