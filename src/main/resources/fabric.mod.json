@@ -4,14 +4,8 @@
   "version": "1.0.0",
   "name": "Onyx Mace Utils",
   "description": "Auto Windcharge Jump and Instant Aerial Mace",
-  "authors": [
-    "OnyxReach"
-  ],
-  "contact": {
-    "sources": "https://github.com/bibihasil/OnyxMaceUtils"
-  },
+  "authors": ["OnyxReach"],
   "license": "CC0-1.0",
-  "icon": "assets/modid/icon.png",
   "environment": "*",
   "entrypoints": {
     "client": [
