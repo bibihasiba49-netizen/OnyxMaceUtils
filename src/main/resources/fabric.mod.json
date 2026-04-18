@@ -9,7 +9,7 @@
   "environment": "*",
   "entrypoints": {
     "client": [
-      "com.example.mixin.OnyxUtils"
+      "com.onyxreach.mod.OnyxUtils"
     ]
   },
   "depends": {
